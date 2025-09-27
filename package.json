@@ -1,0 +1,22 @@
+{
+  "name": "parking-watcher",
+  "version": "1.0.0",
+  "description": "Monitor parking availability and notify via Telegram",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon --watch index.js --ignore data/* --ignore node_modules --ext js,mjs",
+    "test": "echo \"No tests\" && exit 0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^12.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
