@@ -9,8 +9,19 @@ services:
     container_name: parking-watcher
     restart: unless-stopped
     environment:
-      - INTERVAL_SEC=60
+      - INTERVAL_SEC=${INTERVAL_SEC:-60}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - CHAT_ID=${CHAT_ID}
+      - API_URL=${API_URL:-https://sibakademstroy.brusnika.ru/api/parking_spaces/?building=286&floor=-2&limit=300}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
     volumes:
       - ./data:/app/data
+      - ./logs:/app/logs
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

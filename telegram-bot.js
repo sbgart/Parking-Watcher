@@ -1,25 +1,17 @@
 import { getUserSettings, updateUserSettings } from './database.js';
+import { messages } from './config.js';
 
 // Обработка сообщений от пользователя
 export async function handleTelegramMessage(message) {
   const chatId = String(message.chat.id);
   const text = message.text?.trim();
   
- // Получаем текущие настройки пользователя
   let userSettings = getUserSettings(chatId);
   
   if (text === '/start' || text === '/help') {
-    const helpMessage =
-      `🤖 <b>Парковочный ассистент</b>\n\n` +
-      `<b>Доступные команды:</b>\n` +
-      `<code>/spot [номер]</code> - Установить номер парковочного места\n` +
-      `<code>/status</code> - Проверить статус вашего места\n` +
-      `<code>/cancel</code> - Отменить отслеживание\n` +
-      `<code>/help</code> - Список команд бота`;
-    
     return {
       chat_id: chatId,
-      text: helpMessage,
+      text: messages.helpMessage,
       parse_mode: 'HTML'
     };
   }
@@ -43,7 +35,6 @@ export async function handleTelegramMessage(message) {
       };
     }
     
-    // Обновляем настройки пользователя
     userSettings = updateUserSettings(chatId, spotNumber);
     
     return {
@@ -79,7 +70,6 @@ export async function handleTelegramMessage(message) {
     };
   }
   
-  // Если сообщение не распознано как команда
   return {
     chat_id: chatId,
     text: '🤖 Неизвестная команда. Отправьте /help для списка доступных команд.',

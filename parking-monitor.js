@@ -2,21 +2,22 @@
 import { getFullList, diff, isAvailable } from './api-client.js';
 import { loadState, saveState } from './state-manager.js';
 import { sendTelegram, MESSAGE_TEMPLATE, ALERT_TEMPLATE, CHAT_ID, formatSpotStatusForTemplate, formatSpotStatusChangeMessage } from './notification-manager.js';
+import { monitoring } from './config.js';
 
 async function tick(initial = false) {
- const now = new Date().toLocaleString('ru-RU');
+  const now = new Date().toLocaleString('ru-RU');
   const state = loadState();
 
   const { total, available, numbers, all } = await getFullList();
   const { appeared, disappeared } = diff(state.numbers || [], numbers);
 
-  // Получаем номер парковочного места для основного чата (установленного в переменной окружения)
+  // Получаем номер парковочного места для основного чата
   const { getUserSettings } = await import('./database.js');
   const userSettings = getUserSettings(CHAT_ID);
- const MY_PARKING_SPOT = userSettings ? userSettings.parking_spot : null;
+  const MY_PARKING_SPOT = userSettings ? userSettings.parking_spot : null;
 
   // Проверяем статус выбранного места, если оно задано
- let mySpotStatus = null;
+  let mySpotStatus = null;
   if (MY_PARKING_SPOT) {
     const mySpot = all.find(x => x.number === parseInt(MY_PARKING_SPOT));
     if (mySpot) {
@@ -33,7 +34,6 @@ async function tick(initial = false) {
   // Формируем текст с использованием шаблона
   const header = changed ? 'Изменения парковки' : 'Статус парковки';
   
-  // Подготовим переменные для шаблона
   const templateVars = {
     header: `<b>${header}</b>`,
     timestamp: now,
@@ -76,22 +76,19 @@ async function tick(initial = false) {
     if (disappeared.length) text += `\n➖ Исчезли: ${disappeared.join(', ')}`;
   }
 
-   // Отправка: первое сообщение тихое, а при изменениях — со звуком
-   const silent = initial ? true : !changed;
-   await sendTelegram(text, silent);
+  // Отправка: первое сообщение тихое, а при изменениях — со звуком
+  const silent = initial ? monitoring.initialSilent : !changed;
+  await sendTelegram(text, silent);
 
-   saveState({ numbers, available, mySpotStatus });
+  saveState({ numbers, available, mySpotStatus });
 
-   // Проверяем статусы для всех пользователей, которые установили свои места
-   await checkAllUserSpots(all);
+  // Проверяем статусы для всех пользователей, которые установили свои места
+  await checkAllUserSpots(all);
 }
 
 // Функция для проверки статусов мест всех пользователей
 async function checkAllUserSpots(allSpots) {
-  // Импортируем функцию получения всех настроек пользователей
   const { getAllUserSettings } = await import('./database.js');
-  
-  // Получаем всех пользователей, которые установили свои места
   const users = getAllUserSettings();
   
   for (const user of users) {
@@ -109,11 +106,11 @@ async function checkAllUserSpots(allSpots) {
       // Формируем сообщение для пользователя
       let spotStatusFormatted;
       if (spotStatus === 'свободно') {
-        spotStatusFormatted = `🟢 <b>${spotStatus}</b>`; // Жирный для свободного
+        spotStatusFormatted = `🟢 <b>${spotStatus}</b>`;
       } else if (spotStatus === 'занято') {
-        spotStatusFormatted = `🔴 <b><s>${spotStatus}</s></b>`; // Зачеркнутый для занятого
+        spotStatusFormatted = `🔴 <b><s>${spotStatus}</s></b>`;
       } else {
-        spotStatusFormatted = spotStatus; // Без форматирования для "не найдено"
+        spotStatusFormatted = spotStatus;
       }
       
       const userMessage = [

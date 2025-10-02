@@ -1,6 +1,5 @@
 // api-client.js
-
-const API_URL = process.env.API_URL || 'https://sibakademstroy.brusnika.ru/api/parking_spaces/?building=286&floor=-2&limit=300';
+import { api } from './config.js';
 
 function isAvailable(status) {
   if (!status) return true;
@@ -8,19 +7,49 @@ function isAvailable(status) {
   return s === 'свободна' || s === 'free' || s === 'available' || s === 'on_sale';
 }
 
+async function fetchWithRetry(url, options, retries = api.retryAttempts) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), api.timeout);
+      
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      return response;
+    } catch (error) {
+      if (i === retries) {
+        throw error;
+      }
+      
+      console.warn(`API request failed (attempt ${i + 1}/${retries + 1}):`, error.message);
+      await new Promise(resolve => setTimeout(resolve, api.retryDelay * (i + 1)));
+    }
+  }
+}
+
 async function getFullList() {
-  const res = await fetch(API_URL, {
+  const res = await fetchWithRetry(api.url, {
     headers: {
       'Accept': 'application/json, text/plain, */*',
       'User-Agent': 'Mozilla/5.0 (parking-watcher/1.0)',
       'Referer': 'https://sibakademstroy.brusnika.ru/projects/evropeyskybereg/parking/',
     }
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json(); // DRF: {count, next, previous, results} [2]
+  
+  const data = await res.json();
   const items = Array.isArray(data.results) ? data.results : [];
   const free = items.filter(x => isAvailable(x.status));
   const numbers = free.map(x => x.number).sort((a,b) => (a??0)-(b??0));
+  
   return { total: items.length, available: free.length, numbers, all: items };
 }
 

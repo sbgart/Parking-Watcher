@@ -16,14 +16,15 @@ RUN git clone -b $BRANCH https://github.com/sbgart/Parking-Watcher.git ./
 # Устанавливаем зависимости
 RUN npm install
 
-# Создаем директорию для данных и устанавливаем права
-RUN mkdir -p data && chown -R node:node .
+# Создаем директории для данных и логов, устанавливаем права
+RUN mkdir -p data logs && chown -R node:node .
 
 # Меняем пользователя на node для безопасности
 USER node
 
 # Устанавливаем переменные окружения по умолчанию
 ENV INTERVAL_SEC=60
+ENV LOG_LEVEL=info
 
 # Указываем команду запуска
 CMD ["node", "index.js"]

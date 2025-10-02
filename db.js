@@ -1,8 +1,8 @@
 import sqlite3 from 'better-sqlite3';
 import path from 'node:path';
+import { database } from './config.js';
 
-const dbPath = path.resolve('./data/parking.db');
-const db = new sqlite3(dbPath);
+const db = new sqlite3(database.path);
 
 // Создаем таблицы
 db.exec(`
