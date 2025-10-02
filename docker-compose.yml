@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  parking-watcher:
+    build:
+      context: .
+      args:
+        - BRANCH=${REPO_BRANCH:-main}
+    container_name: parking-watcher
+    restart: unless-stopped
+    environment:
+      - INTERVAL_SEC=60
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - .env

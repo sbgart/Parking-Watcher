@@ -1,7 +1,4 @@
 // notification-manager.js
-import fs from 'node:fs';
-import path from 'node:path';
-
 const BOT_TOKEN = process.env.BOT_TOKEN || "8310853925:AAEOhH2RVCzXBIFnlhXhqn0NcSuaFGMoR4k";
 const CHAT_ID = process.env.CHAT_ID || "-1003024904605";
 

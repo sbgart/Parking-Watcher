@@ -1,6 +1,4 @@
 // api-client.js
-import fs from 'node:fs';
-import path from 'node:path';
 
 const API_URL = process.env.API_URL || 'https://sibakademstroy.brusnika.ru/api/parking_spaces/?building=286&floor=-2&limit=300';
 

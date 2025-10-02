@@ -3,7 +3,6 @@ import { getUserSettings, updateUserSettings } from './database.js';
 // Обработка сообщений от пользователя
 export async function handleTelegramMessage(message) {
   const chatId = String(message.chat.id);
-  const userId = message.from?.id;
   const text = message.text?.trim();
   
  // Получаем текущие настройки пользователя
