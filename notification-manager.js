@@ -40,11 +40,15 @@ function formatSpotStatusChangeMessage(spotNumber, spotStatus) {
   }
 }
 
+const MESSAGE_TEMPLATE = messages.template;
+const ALERT_TEMPLATE = messages.alertTemplate;
+const CHAT_ID = telegram.chatId;
+
 export { 
   sendTelegram, 
-  MESSAGE_TEMPLATE: messages.template, 
-  ALERT_TEMPLATE: messages.alertTemplate, 
-  CHAT_ID: telegram.chatId, 
+  MESSAGE_TEMPLATE,
+  ALERT_TEMPLATE,
+  CHAT_ID,
   formatSpotStatusForTemplate, 
   formatSpotStatusChangeMessage 
 };

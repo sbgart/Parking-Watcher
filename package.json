@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon --watch index.js --ignore data/* --ignore node_modules --ext js,mjs",
-    "test": "echo \"No tests\" && exit 0"
+    "test": "echo \"No tests\" && exit 0",
+    "dev:test": "NODE_ENV=test node -r dotenv/config index.js dotenv_config_path=.env.test",
+    "dev:test:watch": "NODE_ENV=test nodemon -r dotenv/config --watch index.js --ignore data/* --ignore node_modules --ext js,mjs index.js dotenv_config_path=.env.test"
   },
   "engines": {
     "node": ">=18.0.0"

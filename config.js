@@ -1,8 +1,16 @@
 // config.js - Централизованная конфигурация приложения
 import dotenv from 'dotenv';
 
-// Загружаем переменные окружения из .env файла
-dotenv.config();
+// Определяем режим работы
+const isTestMode = process.env.NODE_ENV === 'test';
+
+// Загружаем переменные окружения из соответствующего файла
+if (isTestMode) {
+  dotenv.config({ path: '.env.test' });
+  console.log('🔧 Загружены переменные окружения для тестового режима');
+} else {
+  dotenv.config();
+}
 
 // Валидация обязательных переменных окружения
 const requiredEnvVars = ['BOT_TOKEN', 'CHAT_ID'];
@@ -35,11 +43,12 @@ export const config = {
   monitoring: {
     interval: parseInt(process.env.INTERVAL_SEC || '60') * 1000, // в миллисекундах
     initialSilent: process.env.INITIAL_SILENT === 'true',
+    isTestMode: isTestMode, // Добавляем флаг тестового режима
   },
 
   // База данных
   database: {
-    path: process.env.DB_PATH || './data/parking.db',
+    path: isTestMode ? './data/test_parking.db' : (process.env.DB_PATH || './data/parking.db'),
     backupInterval: parseInt(process.env.DB_BACKUP_INTERVAL || '86400000'), // 24 часа
   },
 
@@ -64,9 +73,9 @@ export const config = {
 
   // Логирование
   logging: {
-    level: process.env.LOG_LEVEL || 'info',
-    format: process.env.LOG_FORMAT || 'json',
-    file: process.env.LOG_FILE || './logs/app.log',
+    level: isTestMode ? 'debug' : (process.env.LOG_LEVEL || 'info'),
+    format: isTestMode ? 'pretty' : (process.env.LOG_FORMAT || 'json'),
+    file: isTestMode ? './logs/test_app.log' : (process.env.LOG_FILE || './logs/app.log'),
   },
 
   // Docker/контейнер

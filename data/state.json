@@ -2,15 +2,11 @@
   "numbers": [
     194,
     195,
-    198,
-    199,
     319,
     320,
     331,
-    332,
-    335,
-    336
+    332
   ],
-  "available": 10,
-  "mySpotStatus": "свободно"
+  "available": 6,
+  "mySpotStatus": null
 }
