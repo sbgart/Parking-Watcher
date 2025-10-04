@@ -15,8 +15,8 @@ services:
       - API_URL=${API_URL:-https://sibakademstroy.brusnika.ru/api/parking_spaces/?building=286&floor=-2&limit=300}
       - LOG_LEVEL=${LOG_LEVEL:-info}
     volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
+      - parking-data:/app/data
+      - parking-logs:/app/logs
     env_file:
       - .env
     healthcheck:
@@ -25,3 +25,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+volumes:
+  parking-data:
+  parking-logs:
