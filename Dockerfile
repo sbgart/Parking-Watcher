@@ -1,5 +1,5 @@
-# Используем официальный образ Node.js
-FROM node:18-alpine
+# Используем официальный образ Node.js (версия 20 или выше для better-sqlite3)
+FROM node:20-alpine
 
 # Устанавливаем аргумент для ветки
 ARG BRANCH=main
@@ -7,8 +7,9 @@ ARG BRANCH=main
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Устанавливаем git, если его нет
-RUN apk add --no-cache git
+# Устанавливаем git и build tools для компиляции нативных модулей
+# python3, make, g++ нужны для better-sqlite3
+RUN apk add --no-cache git python3 make g++
 
 # Клонируем репозиторий с указанной веткой
 RUN git clone -b $BRANCH https://github.com/sbgart/Parking-Watcher.git ./
