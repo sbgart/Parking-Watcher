@@ -40,12 +40,12 @@ async function tick(initial = false) {
     total: total,
     available: available,
     numbers: numbers.length ? numbers.join(', ') : '—',
-    my_spot_status: ''
+    my_spot_status: '',
   };
 
   // Добавляем информацию о выбранном месте
   if (MY_PARKING_SPOT) {
-    let mySpotText = formatSpotStatusForTemplate(MY_PARKING_SPOT, mySpotStatus);
+    const mySpotText = formatSpotStatusForTemplate(MY_PARKING_SPOT, mySpotStatus);
     templateVars.my_spot_status = mySpotText;
   }
 
@@ -72,8 +72,8 @@ async function tick(initial = false) {
   }
   
   if (changed) {
-    if (appeared.length) text += `\n➕ Появились: ${appeared.join(', ')}`;
-    if (disappeared.length) text += `\n➖ Исчезли: ${disappeared.join(', ')}`;
+    if (appeared.length) {text += `\n➕ Появились: ${appeared.join(', ')}`;}
+    if (disappeared.length) {text += `\n➖ Исчезли: ${disappeared.join(', ')}`;}
   }
 
   // Отправка: первое сообщение тихое, а при изменениях — со звуком
@@ -116,7 +116,7 @@ async function checkAllUserSpots(allSpots) {
       const userMessage = [
         `<b>Статус вашего места</b> — ${new Date().toLocaleString('ru-RU')}`,
         `Ваше место (<code>${parking_spot}</code>): ${spotStatusFormatted}`,
-        `Всего мест: ${allSpots.length}, Свободно: ${allSpots.filter(x => isAvailable(x.status)).length}`
+        `Всего мест: ${allSpots.length}, Свободно: ${allSpots.filter(x => isAvailable(x.status)).length}`,
       ].join('\n');
       
       try {

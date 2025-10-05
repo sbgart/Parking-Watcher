@@ -17,7 +17,7 @@ async function sendTelegram(text, silent, chatId = telegram.chatId) {
   });
   
   if (!res.ok) {
-    const err = await res.text().catch(()=> '');
+    const err = await res.text().catch(() => '');
     throw new Error(`Telegram HTTP ${res.status}: ${err.slice(0,200)}`);
   }
 }
@@ -50,5 +50,5 @@ export {
   ALERT_TEMPLATE,
   CHAT_ID,
   formatSpotStatusForTemplate, 
-  formatSpotStatusChangeMessage 
+  formatSpotStatusChangeMessage, 
 };

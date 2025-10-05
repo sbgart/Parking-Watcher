@@ -2,7 +2,7 @@
 import { api } from './config.js';
 
 function isAvailable(status) {
-  if (!status) return true;
+  if (!status) {return true;}
   const s = String(status).trim().toLowerCase();
   return s === 'свободна' || s === 'free' || s === 'available' || s === 'on_sale';
 }
@@ -15,7 +15,7 @@ async function fetchWithRetry(url, options, retries = api.retryAttempts) {
       
       const response = await fetch(url, {
         ...options,
-        signal: controller.signal
+        signal: controller.signal,
       });
       
       clearTimeout(timeoutId);
@@ -42,7 +42,7 @@ async function getFullList() {
       'Accept': 'application/json, text/plain, */*',
       'User-Agent': 'Mozilla/5.0 (parking-watcher/1.0)',
       'Referer': 'https://sibakademstroy.brusnika.ru/projects/evropeyskybereg/parking/',
-    }
+    },
   });
   
   const data = await res.json();

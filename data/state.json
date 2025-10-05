@@ -5,8 +5,9 @@
     319,
     320,
     331,
-    332
+    332,
+    336
   ],
-  "available": 6,
-  "mySpotStatus": null
+  "available": 7,
+  "mySpotStatus": "свободно"
 }

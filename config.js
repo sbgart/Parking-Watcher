@@ -28,7 +28,6 @@ export const config = {
   telegram: {
     botToken: process.env.BOT_TOKEN,
     chatId: process.env.CHAT_ID,
-    updateCheckInterval: parseInt(process.env.TELEGRAM_UPDATE_INTERVAL || '5000'),
   },
 
   // API настройки
@@ -41,7 +40,7 @@ export const config = {
 
   // Мониторинг
   monitoring: {
-    interval: parseInt(process.env.INTERVAL_SEC || '60') * 1000, // в миллисекундах
+    interval: parseInt(process.env.INTERVAL_MIN || '1') * 60 * 1000, // в миллисекундах
     initialSilent: process.env.INITIAL_SILENT === 'true',
     isTestMode: isTestMode, // Добавляем флаг тестового режима
   },
@@ -49,7 +48,6 @@ export const config = {
   // База данных
   database: {
     path: isTestMode ? './data/test_parking.db' : (process.env.DB_PATH || './data/parking.db'),
-    backupInterval: parseInt(process.env.DB_BACKUP_INTERVAL || '86400000'), // 24 часа
   },
 
   // Шаблоны сообщений
@@ -60,7 +58,7 @@ export const config = {
 Номера: {{numbers}}
 {{my_spot_status}}`,
     
-    alertTemplate: process.env.ALERT_TEMPLATE || `⚠️ <b>ВНИМАНИЕ!</b> Ваше парковочное место <code>{{spot_number}}</code> сейчас занято!`,
+    alertTemplate: process.env.ALERT_TEMPLATE || '⚠️ <b>ВНИМАНИЕ!</b> Ваше парковочное место <code>{{spot_number}}</code> сейчас занято!',
     
     helpMessage: `🤖 <b>Парковочный ассистент</b>
 
@@ -70,23 +68,10 @@ export const config = {
 <code>/cancel</code> - Отменить отслеживание
 <code>/help</code> - Список команд бота`,
   },
-
-  // Логирование
-  logging: {
-    level: isTestMode ? 'debug' : (process.env.LOG_LEVEL || 'info'),
-    format: isTestMode ? 'pretty' : (process.env.LOG_FORMAT || 'json'),
-    file: isTestMode ? './logs/test_app.log' : (process.env.LOG_FILE || './logs/app.log'),
-  },
-
-  // Docker/контейнер
-  container: {
-    healthCheckInterval: parseInt(process.env.HEALTH_CHECK_INTERVAL || '30000'),
-    gracefulShutdownTimeout: parseInt(process.env.GRACEFUL_SHUTDOWN_TIMEOUT || '10000'),
-  },
 };
 
 // Экспортируем отдельные секции для удобства
-export const { telegram, api, monitoring, database, messages, logging, container } = config;
+export const { telegram, api, monitoring, database, messages } = config;
 
 // Функция для валидации конфигурации
 export function validateConfig() {
@@ -94,7 +79,7 @@ export function validateConfig() {
 
   // Проверяем числовые значения
   if (isNaN(config.monitoring.interval) || config.monitoring.interval <= 0) {
-    errors.push('INTERVAL_SEC должен быть положительным числом');
+    errors.push('INTERVAL_MIN должен быть положительным числом');
   }
 
   if (isNaN(config.api.timeout) || config.api.timeout <= 0) {
@@ -119,19 +104,4 @@ export function validateConfig() {
   }
 
   return true;
-}
-
-// Функция для получения конфигурации в режиме разработки
-export function getDevConfig() {
-  return {
-    ...config,
-    monitoring: {
-      ...config.monitoring,
-      interval: 10000, // 10 секунд для разработки
-    },
-    logging: {
-      ...config.logging,
-      level: 'debug',
-    },
-  };
 }

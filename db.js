@@ -1,5 +1,4 @@
 import sqlite3 from 'better-sqlite3';
-import path from 'node:path';
 import { database } from './config.js';
 
 const db = new sqlite3(database.path);

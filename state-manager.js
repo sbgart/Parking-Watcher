@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const dataDir = path.resolve('./data');
 const stateFile = path.join(dataDir, 'state.json');
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+if (!fs.existsSync(dataDir)) {fs.mkdirSync(dataDir, { recursive: true });}
 
 function loadState() {
   try {
